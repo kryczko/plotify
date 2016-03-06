@@ -1,0 +1,17 @@
+/*
+ * Keyframes
+ */
+
+.default {
+    display: flex;
+    justify-content: center;
+    cursor: pointer;
+    bottom: 0px;
+    width: 100%;
+    top: 25px;
+    position: absolute;
+/*    -webkit-animation: goRight 0.1s ease-in 0.1s;  Chrome;
+     Safari, Opera 
+     -webkit-animation-fill-mode: forwards;*/
+
+}
