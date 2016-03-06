@@ -11,15 +11,15 @@ class Nav extends React.Component {
         return (
             <div>
                 <div className="tab-group">
-                    <Link className='tab-item' activeClassName='active' to='/load'>
+                    <Link style={{ textDecoration: 'none', color: '#555'}} className='tab-item' activeClassName='active' to='/load'>
                         <span className="icon"></span>
                         Load
                     </Link>
-                    <Link className='tab-item' activeClassName='active' to='/inspect'>
+                    <Link style={{ textDecoration: 'none', color: '#555' }} className='tab-item' activeClassName='active' to='/inspect'>
                         <span className="icon"></span>
                         Inspect
                     </Link>
-                    <Link className='tab-item' activeClassName='active' to='/plot'>
+                    <Link style={{ textDecoration: 'none', color: '#555' }} className='tab-item' activeClassName='active' to='/plot'>
                         <span className="icon"></span>
                         Plot
                     </Link>
@@ -73,7 +73,7 @@ class Load extends React.Component {
     render() {
         return (
             <div>
-                <Dropzone className="default" style={{ alignItems: 'center' }} onDrop={this.context.openFile}>
+                <Dropzone className="default" style={{ alignItems: 'center', cursor: 'pointer' }} onDrop={this.context.openFile}>
                     <h1 style={{ fontSize: '4vw', cursor: 'pointer', margin: '0 10% 0'}}>Drag or click anywhere to load data.</h1>
                 </Dropzone>
             </div>
@@ -89,7 +89,11 @@ class Table extends React.Component {
         const data = this.props.data;
 
         if(!data.length) {
-            return <div> You have no data </div>;
+            return (
+                <div> 
+                    <p style={{ fontSize: '4vw'}}> You have not loaded data yet.</p>
+                </div>
+                )
         }
 
         return (
@@ -127,12 +131,16 @@ class Inspect extends React.Component {
     render() {
         return (
             <div>
-                <div className="default">
-                    <Table data={this.context.data} />
-                </div>
                 {
-                    this.context.data.length != 0 ?
-                        <button style={{position: 'absolute', bottom: '10', float: 'center'}} className="btn btn-large btn-primary" onClick={() => { location.hash = '/plot'; }}>Plot your data!</button> : <div/>
+                        this.context.data.length === 0 ?
+                            <div className="default" style={{alignItems: 'center', flexDirection: 'column'}}>
+                                <Table data={this.context.data} />
+                                <button style={{}} className="btn btn-large btn-primary" onClick={() => { location.hash = '/load'; }}>GO BACK AND LOAD DATA</button>
+                            </div> : 
+                            <div className="default" style={{flexDirection: 'column'}}>
+                                <Table data={this.context.data} />
+                                <button style={{position: 'absolute', bottom: '10', float: 'center'}} className="btn btn-large btn-primary" onClick={() => { location.hash = '/plot'; }}>Plot your data!</button>
+                            </div>
                 }
             </div>
         );

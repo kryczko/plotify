@@ -2,12 +2,14 @@
  * Keyframes
  */
 
+
 .default {
     display: flex;
     justify-content: center;
-    cursor: pointer;
     bottom: 0px;
     width: 100%;
     top: 25px;
     position: absolute;
+    font-family: 'Dosis', sans-serif;
+
 }
