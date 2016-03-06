@@ -1,1 +1,6 @@
+# node stuff
 node_modules
+
+# webpack stuff
+bundle.js
+bundle.js.map
