@@ -1,5 +1,5 @@
 import React from 'react';
-import { Router, Route, hashHistory } from 'react-router';
+import { Router, Route, Redirect, hashHistory } from 'react-router';
 import { render } from 'react-dom';
 
 import { App, Load, Inspect, Plot } from './Menu.js';

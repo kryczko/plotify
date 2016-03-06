@@ -55,10 +55,6 @@ class App extends React.Component {
         this.setState({ data });
     }
 
-    OnButtonClick(event) {
-        this.setState({visible: {Load: false, Inpect: false, Plot: true}})
-    }
-
     render() {
         return (
             <div>
@@ -132,11 +128,11 @@ class Inspect extends React.Component {
         return (
             <div>
                 <div className="default">
-                    <Table data={this.props.data} />
+                    <Table data={this.context.data} />
                 </div>
                 {
-                    this.props.data.length != 0 ?
-                        <button style={{position: 'absolute', bottom: '10', float: 'center'}} className="btn btn-large btn-primary" onClick={this.props.OnButtonClick}>Plot your data!</button> : <div/>
+                    this.context.data.length != 0 ?
+                        <button style={{position: 'absolute', bottom: '10', float: 'center'}} className="btn btn-large btn-primary" onClick={() => { location.hash = '/plot'; }}>Plot your data!</button> : <div/>
                 }
             </div>
         );
@@ -147,9 +143,10 @@ Inspect.contextTypes = {
 };
 
 class Plot extends React.Component {
-    constructor(props) {
+    constructor(props, context) {
         super(props);
-        const beforeData = this.props.data;
+
+        const beforeData = context.data;
         // do something with before data and turn it into after data
         const xs = beforeData.map(line => {
             return parseFloat(line[0]);
@@ -161,21 +158,26 @@ class Plot extends React.Component {
         const afterData = { x: xs, ys: [y] };
 
         this.state = {
-            data: {data: afterData}
+            data: { data: afterData }
         };
     }
+
     render() {
         const {
             data
         } = this.state;
-        console.log(data);
+
         return (
             <div>
-                <LineChart data={data} style={{width: '80%'}}/>
+                { JSON.stringify(data) }
+                {/* <LineChart data={data} style={{width: '80%'}}/> */}
             </div>
         );
     }
 }
+Plot.contextTypes = {
+    data: React.PropTypes.array
+};
 
 
 render(
@@ -188,4 +190,4 @@ export {
     Load,
     Inspect,
     Plot
-    }
+    };
