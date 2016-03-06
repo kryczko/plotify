@@ -38,7 +38,8 @@ class App extends React.Component {
     getChildContext() {
         return {
             data: this.state.data,
-            openFile: this.openFile.bind(this)
+            openFile: this.openFile.bind(this),
+            clearData: this.clearData.bind(this)
         };
     }
 
@@ -56,6 +57,10 @@ class App extends React.Component {
         location.hash = '/inspect';
     }
 
+    clearData() {
+        this.setState({ data: [] });
+    }
+
     render() {
         return (
             <div>
@@ -67,7 +72,8 @@ class App extends React.Component {
 }
 App.childContextTypes = {
     data: React.PropTypes.array,
-    openFile: React.PropTypes.func
+    openFile: React.PropTypes.func,
+    clearData: React.PropTypes.func
 };
 
 class Load extends React.Component {
@@ -91,7 +97,7 @@ class Table extends React.Component {
 
         if(!data.length) {
             return (
-                <div> 
+                <div>
                     <p style={{ fontSize: '4vw'}}> You have not loaded data yet.</p>
                 </div>
                 )
@@ -137,11 +143,11 @@ class Inspect extends React.Component {
                             <div className="default" style={{alignItems: 'center', flexDirection: 'column'}}>
                                 <Table data={this.context.data} />
                                 <button style={{}} className="btn btn-large btn-primary" onClick={() => { location.hash = '/load'; }}>GO BACK AND LOAD DATA</button>
-                            </div> : 
+                            </div> :
                             <div>
                                 <Table style={{top: '0'}} data={this.context.data} />
                                 <button style={{position: 'absolute', bottom: '25', left: '10%'}} className="btn btn-large btn-positive" onClick={() => { location.hash = '/plot'; }}>PLOT YOUR DATA</button>
-                                <button style={{position: 'absolute', bottom: '25', right: '10%'}} className="btn btn-large btn-negative" onClick={() => {this.context.data = []}}>REMOVE DATA</button>
+                                <button style={{position: 'absolute', bottom: '25', right: '10%'}} className="btn btn-large btn-negative" onClick={this.context.clearData}>REMOVE DATA</button>
                             </div>
                 }
             </div>
@@ -149,7 +155,8 @@ class Inspect extends React.Component {
     }
 }
 Inspect.contextTypes = {
-    data: React.PropTypes.array
+    data: React.PropTypes.array,
+    clearData: React.PropTypes.func
 };
 
 class Plot extends React.Component {
