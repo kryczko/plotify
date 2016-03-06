@@ -146,16 +146,9 @@ class Plot extends React.Component {
     constructor(props, context) {
         super(props);
 
-        const beforeData = context.data;
-        // do something with before data and turn it into after data
-        const xs = beforeData.map(line => {
-            return parseFloat(line[0]);
+        const afterData = context.data.map(line => {
+            return { x: parseFloat(line[0]), ys: [parseFloat(line[1])] };
         });
-        const y = beforeData.map(line => {
-            return parseFloat(line[1]);
-        });
-
-        const afterData = { x: xs, ys: [y] };
 
         this.state = {
             data: { data: afterData }
@@ -169,8 +162,7 @@ class Plot extends React.Component {
 
         return (
             <div>
-                { JSON.stringify(data) }
-                {/* <LineChart data={data} style={{width: '80%'}}/> */}
+                <LineChart data={data} style={{width: '80%'}}/>
             </div>
         );
     }
