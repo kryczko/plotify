@@ -1,6 +1,7 @@
 import React from 'react';
 import { render } from 'react-dom';
 import Dropzone from 'react-dropzone';
+import Slider from './slider.js'
 
 class Table extends React.Component {
     render() {
@@ -100,7 +101,7 @@ class App extends React.Component {
                 return elem != '';
             })
         });
-        this.setState({data: splitData});
+        this.setState({data: splitData, visible: {Load: false, Inspect: true, Plot: false}});
     }
 
     onClick(event) {
@@ -125,7 +126,7 @@ class App extends React.Component {
             return (
                 <div>
                     <Nav state={visible} onClick={this.onClick} />
-                    <Load onDrop={this.openFile} />
+                    <Load onDrop={this.openFile}/>
                 </div>
                 ) 
         } else if (visible.Inspect) {
@@ -150,7 +151,7 @@ class Load extends React.Component {
     render() {
         return (
             <div>
-                <Dropzone style={{width: '100%', bottom:'0', top: '0', position: 'absolute', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center'}} onDrop={this.props.onDrop}>
+                <Dropzone className="default" style={{alignItems: 'center'}} onDrop={this.props.onDrop}>
                     <h1 style={{fontSize: '4vw', cursor: 'pointer', margin: '0 10% 0'}}>Drag or click anywhere to load data.</h1>
                 </Dropzone>
             </div>
@@ -161,7 +162,7 @@ class Load extends React.Component {
 class Inspect extends React.Component {
     render() {
         return (
-            <div>
+            <div className="default">
                 <Table data={this.props.data} />
             </div>
         )
