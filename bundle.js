@@ -24740,9 +24740,7 @@
 	
 	var _reactDropzone2 = _interopRequireDefault(_reactDropzone);
 	
-	var _slider = __webpack_require__(219);
-	
-	var _slider2 = _interopRequireDefault(_slider);
+	var _plottr = __webpack_require__(219);
 	
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 	
@@ -24890,6 +24888,7 @@
 	        };
 	        _this3.openFile = _this3.openFile.bind(_this3);
 	        _this3.onClick = _this3.onClick.bind(_this3);
+	        _this3.OnButtonClick = _this3.OnButtonClick.bind(_this3);
 	        return _this3;
 	    }
 	
@@ -24922,6 +24921,11 @@
 	            this.setState({ visible: visible });
 	        }
 	    }, {
+	        key: 'OnButtonClick',
+	        value: function OnButtonClick(event) {
+	            this.setState({ visible: { Load: false, Inpect: false, Plot: true } });
+	        }
+	    }, {
 	        key: 'render',
 	        value: function render() {
 	            var _state2 = this.state;
@@ -24940,7 +24944,7 @@
 	                    'div',
 	                    null,
 	                    _react2.default.createElement(Nav, { state: visible, onClick: this.onClick }),
-	                    _react2.default.createElement(Inspect, { data: data })
+	                    _react2.default.createElement(Inspect, { data: data, OnButtonClick: this.OnButtonClick })
 	                );
 	            } else {
 	                return _react2.default.createElement(
@@ -25001,8 +25005,17 @@
 	        value: function render() {
 	            return _react2.default.createElement(
 	                'div',
-	                { className: 'default' },
-	                _react2.default.createElement(Table, { data: this.props.data })
+	                null,
+	                _react2.default.createElement(
+	                    'div',
+	                    { className: 'default' },
+	                    _react2.default.createElement(Table, { data: this.props.data })
+	                ),
+	                this.props.data.length != 0 ? _react2.default.createElement(
+	                    'button',
+	                    { style: { position: 'absolute', bottom: '10', float: 'center' }, className: 'btn btn-large btn-primary', onClick: this.props.OnButtonClick },
+	                    'Plot your data!'
+	                ) : _react2.default.createElement('div', null)
 	            );
 	        }
 	    }]);
@@ -25018,14 +25031,34 @@
 	
 	        var _this6 = _possibleConstructorReturn(this, Object.getPrototypeOf(Plot).call(this, props));
 	
-	        _this6.state = {};
+	        var beforeData = _this6.props.data;
+	        // do something with before data and turn it into after data
+	        var xs = beforeData.map(function (line) {
+	            return parseFloat(line[0]);
+	        });
+	        var y = beforeData.map(function (line) {
+	            return parseFloat(line[1]);
+	        });
+	
+	        var afterData = { x: xs, ys: [y] };
+	
+	        _this6.state = {
+	            data: { data: afterData }
+	        };
 	        return _this6;
 	    }
 	
 	    _createClass(Plot, [{
 	        key: 'render',
 	        value: function render() {
-	            return _react2.default.createElement('div', null);
+	            var data = this.state.data;
+	
+	            console.log(data);
+	            return _react2.default.createElement(
+	                'div',
+	                null,
+	                _react2.default.createElement(_plottr.LineChart, { data: data, style: { width: '80%' } })
+	            );
 	        }
 	    }]);
 	
@@ -25339,6 +25372,603 @@
 	Object.defineProperty(exports, "__esModule", {
 	  value: true
 	});
+	exports.GraphSVG = exports.YAxis = exports.XAxis = exports.exportToFile = exports.LineChart = undefined;
+	
+	var _lineChart = __webpack_require__(220);
+	
+	var _lineChart2 = _interopRequireDefault(_lineChart);
+	
+	var _xAxis = __webpack_require__(223);
+	
+	var _xAxis2 = _interopRequireDefault(_xAxis);
+	
+	var _yAxis = __webpack_require__(224);
+	
+	var _yAxis2 = _interopRequireDefault(_yAxis);
+	
+	var _graphSvg = __webpack_require__(222);
+	
+	var _graphSvg2 = _interopRequireDefault(_graphSvg);
+	
+	var _exportToFile = __webpack_require__(226);
+	
+	var _exportToFile2 = _interopRequireDefault(_exportToFile);
+	
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+	
+	exports.
+	// main api
+	LineChart = _lineChart2.default;
+	exports.exportToFile = _exportToFile2.default;
+	exports.
+	
+	// utils
+	XAxis = _xAxis2.default;
+	exports.YAxis = _yAxis2.default;
+	exports.GraphSVG = _graphSvg2.default;
+
+/***/ },
+/* 220 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+	
+	var _slicedToArray = (function () { function sliceIterator(arr, i) { var _arr = []; var _n = true; var _d = false; var _e = undefined; try { for (var _i = arr[Symbol.iterator](), _s; !(_n = (_s = _i.next()).done); _n = true) { _arr.push(_s.value); if (i && _arr.length === i) break; } } catch (err) { _d = true; _e = err; } finally { try { if (!_n && _i["return"]) _i["return"](); } finally { if (_d) throw _e; } } return _arr; } return function (arr, i) { if (Array.isArray(arr)) { return arr; } else if (Symbol.iterator in Object(arr)) { return sliceIterator(arr, i); } else { throw new TypeError("Invalid attempt to destructure non-iterable instance"); } }; })();
+	
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
+	exports.default = LineChart;
+	
+	var _react = __webpack_require__(1);
+	
+	var _react2 = _interopRequireDefault(_react);
+	
+	var _randomcolor = __webpack_require__(221);
+	
+	var _randomcolor2 = _interopRequireDefault(_randomcolor);
+	
+	var _graphSvg = __webpack_require__(222);
+	
+	var _graphSvg2 = _interopRequireDefault(_graphSvg);
+	
+	var _xAxis = __webpack_require__(223);
+	
+	var _xAxis2 = _interopRequireDefault(_xAxis);
+	
+	var _yAxis = __webpack_require__(224);
+	
+	var _yAxis2 = _interopRequireDefault(_yAxis);
+	
+	var _functions = __webpack_require__(225);
+	
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+	
+	function _objectDestructuringEmpty(obj) { if (obj == null) throw new TypeError("Cannot destructure undefined"); }
+	
+	var svgWidth = 800,
+	    svgHeight = 450,
+	    svgPadding = { top: 10, bottom: 10, left: 10, right: 10 },
+	    chartWidth = svgWidth - svgPadding.left - svgPadding.right,
+	    chartHeight = svgHeight - svgPadding.top - svgPadding.bottom;
+	
+	function LineChart() {
+	  var _ref = arguments.length <= 0 || arguments[0] === undefined ? {} : arguments[0];
+	
+	  var _ref$data$data = _ref.data.data;
+	  var data = _ref$data$data === undefined ? [] : _ref$data$data;
+	  var _ref$graph = _ref.graph;
+	  _ref$graph = _ref$graph === undefined ? {} : _ref$graph;
+	
+	  _objectDestructuringEmpty(_ref$graph);
+	
+	  var xs = data.map(function (d) {
+	    return d.x;
+	  });
+	  var yss = data.map(function (d) {
+	    return d.ys;
+	  });
+	
+	  var _domain = (0, _functions.domain)(xs);
+	
+	  var _domain2 = _slicedToArray(_domain, 2);
+	
+	  var xMax = _domain2[1];
+	
+	  var _domain3 = (0, _functions.domain)((0, _functions.flatten)(yss));
+	
+	  var _domain4 = _slicedToArray(_domain3, 2);
+	
+	  var yMax = _domain4[1];
+	
+	  var xScale = chartWidth / xMax;
+	  var yScale = chartHeight / yMax;
+	
+	  var points = yss.map(function (ys, i) {
+	    return { ys: ys.map(function (y) {
+	        return y * yScale;
+	      }), x: xs[i] * xScale };
+	  });
+	
+	  // in case users give us an empty array
+	  var colours = data.length && data[0].ys.length ? (0, _randomcolor2.default)({ count: data[0].ys.length, luminosity: 'light' }) : [];
+	
+	  var yTicks = (0, _functions.sort)((0, _functions.uniq)((0, _functions.flatten)(yss)), function (a, b) {
+	    return a - b;
+	  });
+	
+	  // TODO plottr-info-circle needs an on:hover
+	  return _react2.default.createElement(
+	    _graphSvg2.default,
+	    { width: svgWidth, height: svgHeight, padding: svgPadding },
+	    _react2.default.createElement(
+	      'g',
+	      { id: 'lines' },
+	      points.map(function (_ref2, i) {
+	        var x = _ref2.x;
+	        var ys = _ref2.ys;
+	        return ys.map(function (y, yI) {
+	          return _react2.default.createElement(
+	            'g',
+	            { key: yI },
+	            _react2.default.createElement('line', {
+	              x1: i > 0 ? points[i - 1].x : points[i].x,
+	              x2: x,
+	              y1: chartHeight - (i > 0 ? points[i - 1].ys[yI] : points[i].ys[yI]),
+	              y2: chartHeight - y,
+	              key: yI,
+	              stroke: colours[yI] }),
+	            _react2.default.createElement('circle', {
+	              cx: x,
+	              cy: chartHeight - y,
+	              r: '2',
+	              fill: colours[yI],
+	              stroke: 'transparent',
+	              className: 'plottr-info-circle'
+	            })
+	          );
+	        });
+	      })
+	    ),
+	    _react2.default.createElement(
+	      'g',
+	      { id: 'axis' },
+	      _react2.default.createElement(_xAxis2.default, { xs: xs, xScale: xScale, chartWidth: chartWidth, chartHeight: chartHeight, tickSize: svgPadding.bottom / 2, textSize: svgPadding.bottom / 2 }),
+	      _react2.default.createElement(_yAxis2.default, { ys: yTicks, yScale: yScale, chartWidth: chartWidth, chartHeight: chartHeight, tickSize: svgPadding.left / 2, textSize: svgPadding.left / 2 })
+	    )
+	  );
+	}
+
+/***/ },
+/* 221 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;// randomColor by David Merfield under the MIT license
+	// https://github.com/davidmerfield/randomColor/
+	;(function(root, factory) {
+	
+	  // Support AMD
+	  if (true) {
+	    !(__WEBPACK_AMD_DEFINE_ARRAY__ = [], __WEBPACK_AMD_DEFINE_FACTORY__ = (factory), __WEBPACK_AMD_DEFINE_RESULT__ = (typeof __WEBPACK_AMD_DEFINE_FACTORY__ === 'function' ? (__WEBPACK_AMD_DEFINE_FACTORY__.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__)) : __WEBPACK_AMD_DEFINE_FACTORY__), __WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
+	
+	  // Support CommonJS
+	  } else if (typeof exports === 'object') {
+	    var randomColor = factory();
+	
+	    // Support NodeJS & Component, which allow module.exports to be a function
+	    if (typeof module === 'object' && module && module.exports) {
+	      exports = module.exports = randomColor;
+	    }
+	
+	    // Support CommonJS 1.1.1 spec
+	    exports.randomColor = randomColor;
+	
+	  // Support vanilla script loading
+	  } else {
+	    root.randomColor = factory();
+	  }
+	
+	}(this, function() {
+	
+	  // Seed to get repeatable colors
+	  var seed = null;
+	
+	  // Shared color dictionary
+	  var colorDictionary = {};
+	
+	  // Populate the color dictionary
+	  loadColorBounds();
+	
+	  var randomColor = function (options) {
+	
+	    options = options || {};
+	
+	    // Check if there is a seed and ensure it's an
+	    // integer. Otherwise, reset the seed value.
+	    if (options.seed && options.seed === parseInt(options.seed, 10)) {
+	      seed = options.seed;
+	
+	    // Something was passed as a seed but it wasn't an integer
+	    } else if (options.seed !== undefined && options.seed !== null) {
+	      throw new TypeError('The seed value must be an integer');
+	
+	    // No seed, reset the value outside.
+	    } else {
+	      seed = null;
+	    }
+	
+	    var H,S,B;
+	
+	    // Check if we need to generate multiple colors
+	    if (options.count !== null && options.count !== undefined) {
+	
+	      var totalColors = options.count,
+	          colors = [];
+	
+	      options.count = null;
+	
+	      while (totalColors > colors.length) {
+	
+	        // Since we're generating multiple colors,
+	        // incremement the seed. Otherwise we'd just
+	        // generate the same color each time...
+	        if (seed && options.seed) options.seed += 1;
+	
+	        colors.push(randomColor(options));
+	      }
+	
+	      options.count = totalColors;
+	
+	      return colors;
+	    }
+	
+	    // First we pick a hue (H)
+	    H = pickHue(options);
+	
+	    // Then use H to determine saturation (S)
+	    S = pickSaturation(H, options);
+	
+	    // Then use S and H to determine brightness (B).
+	    B = pickBrightness(H, S, options);
+	
+	    // Then we return the HSB color in the desired format
+	    return setFormat([H,S,B], options);
+	  };
+	
+	  function pickHue (options) {
+	
+	    var hueRange = getHueRange(options.hue),
+	        hue = randomWithin(hueRange);
+	
+	    // Instead of storing red as two seperate ranges,
+	    // we group them, using negative numbers
+	    if (hue < 0) {hue = 360 + hue;}
+	
+	    return hue;
+	
+	  }
+	
+	  function pickSaturation (hue, options) {
+	
+	    if (options.luminosity === 'random') {
+	      return randomWithin([0,100]);
+	    }
+	
+	    if (options.hue === 'monochrome') {
+	      return 0;
+	    }
+	
+	    var saturationRange = getSaturationRange(hue);
+	
+	    var sMin = saturationRange[0],
+	        sMax = saturationRange[1];
+	
+	    switch (options.luminosity) {
+	
+	      case 'bright':
+	        sMin = 55;
+	        break;
+	
+	      case 'dark':
+	        sMin = sMax - 10;
+	        break;
+	
+	      case 'light':
+	        sMax = 55;
+	        break;
+	   }
+	
+	    return randomWithin([sMin, sMax]);
+	
+	  }
+	
+	  function pickBrightness (H, S, options) {
+	
+	    var bMin = getMinimumBrightness(H, S),
+	        bMax = 100;
+	
+	    switch (options.luminosity) {
+	
+	      case 'dark':
+	        bMax = bMin + 20;
+	        break;
+	
+	      case 'light':
+	        bMin = (bMax + bMin)/2;
+	        break;
+	
+	      case 'random':
+	        bMin = 0;
+	        bMax = 100;
+	        break;
+	    }
+	
+	    return randomWithin([bMin, bMax]);
+	  }
+	
+	  function setFormat (hsv, options) {
+	
+	    switch (options.format) {
+	
+	      case 'hsvArray':
+	        return hsv;
+	
+	      case 'hslArray':
+	        return HSVtoHSL(hsv);
+	
+	      case 'hsl':
+	        var hsl = HSVtoHSL(hsv);
+	        return 'hsl('+hsl[0]+', '+hsl[1]+'%, '+hsl[2]+'%)';
+	
+	      case 'hsla':
+	        var hslColor = HSVtoHSL(hsv);
+	        return 'hsla('+hslColor[0]+', '+hslColor[1]+'%, '+hslColor[2]+'%, ' + Math.random() + ')';
+	
+	      case 'rgbArray':
+	        return HSVtoRGB(hsv);
+	
+	      case 'rgb':
+	        var rgb = HSVtoRGB(hsv);
+	        return 'rgb(' + rgb.join(', ') + ')';
+	
+	      case 'rgba':
+	        var rgbColor = HSVtoRGB(hsv);
+	        return 'rgba(' + rgbColor.join(', ') + ', ' + Math.random() + ')';
+	
+	      default:
+	        return HSVtoHex(hsv);
+	    }
+	
+	  }
+	
+	  function getMinimumBrightness(H, S) {
+	
+	    var lowerBounds = getColorInfo(H).lowerBounds;
+	
+	    for (var i = 0; i < lowerBounds.length - 1; i++) {
+	
+	      var s1 = lowerBounds[i][0],
+	          v1 = lowerBounds[i][1];
+	
+	      var s2 = lowerBounds[i+1][0],
+	          v2 = lowerBounds[i+1][1];
+	
+	      if (S >= s1 && S <= s2) {
+	
+	         var m = (v2 - v1)/(s2 - s1),
+	             b = v1 - m*s1;
+	
+	         return m*S + b;
+	      }
+	
+	    }
+	
+	    return 0;
+	  }
+	
+	  function getHueRange (colorInput) {
+	
+	    if (typeof parseInt(colorInput) === 'number') {
+	
+	      var number = parseInt(colorInput);
+	
+	      if (number < 360 && number > 0) {
+	        return [number, number];
+	      }
+	
+	    }
+	
+	    if (typeof colorInput === 'string') {
+	
+	      if (colorDictionary[colorInput]) {
+	        var color = colorDictionary[colorInput];
+	        if (color.hueRange) {return color.hueRange;}
+	      }
+	    }
+	
+	    return [0,360];
+	
+	  }
+	
+	  function getSaturationRange (hue) {
+	    return getColorInfo(hue).saturationRange;
+	  }
+	
+	  function getColorInfo (hue) {
+	
+	    // Maps red colors to make picking hue easier
+	    if (hue >= 334 && hue <= 360) {
+	      hue-= 360;
+	    }
+	
+	    for (var colorName in colorDictionary) {
+	       var color = colorDictionary[colorName];
+	       if (color.hueRange &&
+	           hue >= color.hueRange[0] &&
+	           hue <= color.hueRange[1]) {
+	          return colorDictionary[colorName];
+	       }
+	    } return 'Color not found';
+	  }
+	
+	  function randomWithin (range) {
+	    if (seed === null) {
+	      return Math.floor(range[0] + Math.random()*(range[1] + 1 - range[0]));
+	    } else {
+	      //Seeded random algorithm from http://indiegamr.com/generate-repeatable-random-numbers-in-js/
+	      var max = range[1] || 1;
+	      var min = range[0] || 0;
+	      seed = (seed * 9301 + 49297) % 233280;
+	      var rnd = seed / 233280.0;
+	      return Math.floor(min + rnd * (max - min));
+	    }
+	  }
+	
+	  function HSVtoHex (hsv){
+	
+	    var rgb = HSVtoRGB(hsv);
+	
+	    function componentToHex(c) {
+	        var hex = c.toString(16);
+	        return hex.length == 1 ? '0' + hex : hex;
+	    }
+	
+	    var hex = '#' + componentToHex(rgb[0]) + componentToHex(rgb[1]) + componentToHex(rgb[2]);
+	
+	    return hex;
+	
+	  }
+	
+	  function defineColor (name, hueRange, lowerBounds) {
+	
+	    var sMin = lowerBounds[0][0],
+	        sMax = lowerBounds[lowerBounds.length - 1][0],
+	
+	        bMin = lowerBounds[lowerBounds.length - 1][1],
+	        bMax = lowerBounds[0][1];
+	
+	    colorDictionary[name] = {
+	      hueRange: hueRange,
+	      lowerBounds: lowerBounds,
+	      saturationRange: [sMin, sMax],
+	      brightnessRange: [bMin, bMax]
+	    };
+	
+	  }
+	
+	  function loadColorBounds () {
+	
+	    defineColor(
+	      'monochrome',
+	      null,
+	      [[0,0],[100,0]]
+	    );
+	
+	    defineColor(
+	      'red',
+	      [-26,18],
+	      [[20,100],[30,92],[40,89],[50,85],[60,78],[70,70],[80,60],[90,55],[100,50]]
+	    );
+	
+	    defineColor(
+	      'orange',
+	      [19,46],
+	      [[20,100],[30,93],[40,88],[50,86],[60,85],[70,70],[100,70]]
+	    );
+	
+	    defineColor(
+	      'yellow',
+	      [47,62],
+	      [[25,100],[40,94],[50,89],[60,86],[70,84],[80,82],[90,80],[100,75]]
+	    );
+	
+	    defineColor(
+	      'green',
+	      [63,178],
+	      [[30,100],[40,90],[50,85],[60,81],[70,74],[80,64],[90,50],[100,40]]
+	    );
+	
+	    defineColor(
+	      'blue',
+	      [179, 257],
+	      [[20,100],[30,86],[40,80],[50,74],[60,60],[70,52],[80,44],[90,39],[100,35]]
+	    );
+	
+	    defineColor(
+	      'purple',
+	      [258, 282],
+	      [[20,100],[30,87],[40,79],[50,70],[60,65],[70,59],[80,52],[90,45],[100,42]]
+	    );
+	
+	    defineColor(
+	      'pink',
+	      [283, 334],
+	      [[20,100],[30,90],[40,86],[60,84],[80,80],[90,75],[100,73]]
+	    );
+	
+	  }
+	
+	  function HSVtoRGB (hsv) {
+	
+	    // this doesn't work for the values of 0 and 360
+	    // here's the hacky fix
+	    var h = hsv[0];
+	    if (h === 0) {h = 1;}
+	    if (h === 360) {h = 359;}
+	
+	    // Rebase the h,s,v values
+	    h = h/360;
+	    var s = hsv[1]/100,
+	        v = hsv[2]/100;
+	
+	    var h_i = Math.floor(h*6),
+	      f = h * 6 - h_i,
+	      p = v * (1 - s),
+	      q = v * (1 - f*s),
+	      t = v * (1 - (1 - f)*s),
+	      r = 256,
+	      g = 256,
+	      b = 256;
+	
+	    switch(h_i) {
+	      case 0: r = v; g = t; b = p;  break;
+	      case 1: r = q; g = v; b = p;  break;
+	      case 2: r = p; g = v; b = t;  break;
+	      case 3: r = p; g = q; b = v;  break;
+	      case 4: r = t; g = p; b = v;  break;
+	      case 5: r = v; g = p; b = q;  break;
+	    }
+	
+	    var result = [Math.floor(r*255), Math.floor(g*255), Math.floor(b*255)];
+	    return result;
+	  }
+	
+	  function HSVtoHSL (hsv) {
+	    var h = hsv[0],
+	      s = hsv[1]/100,
+	      v = hsv[2]/100,
+	      k = (2-s)*v;
+	
+	    return [
+	      h,
+	      Math.round(s*v / (k<1 ? k : 2-k) * 10000) / 100,
+	      k/2 * 100
+	    ];
+	  }
+	
+	  return randomColor;
+	}));
+
+/***/ },
+/* 222 */
+/***/ function(module, exports, __webpack_require__) {
+
+	"use strict";
+	
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
+	exports.default = GraphSvg;
 	
 	var _react = __webpack_require__(1);
 	
@@ -25346,131 +25976,261 @@
 	
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 	
-	var interval = null;
-	var Slider = _react2.default.createClass({
-	  displayName: 'Slider',
-	  getDefaultProps: function getDefaultProps() {
-	    return {
-	      slideTime: 5000,
-	      idleTime: 10000,
-	      onSlideChange: function onSlideChange() {},
-	      pause: false
-	    };
-	  },
-	  getInitialState: function getInitialState() {
-	    return {
-	      current: 0,
-	      maxHeight: 0
-	    };
-	  },
-	  startInterval: function startInterval() {
-	    var _this = this;
+	function GraphSvg(_ref) {
+	  var width = _ref.width;
+	  var height = _ref.height;
+	  var padding = _ref.padding;
+	  var children = _ref.children;
 	
-	    interval = setInterval(function () {
-	      if (!_this.state.pause) {
-	        _this.setState({ current: (_this.state.current + 1) % _this.props.children.length });
-	        _this.props.onSlideChange(_this.state.current);
-	      }
-	    }, this.props.slideTime);
-	  },
-	  pause: function pause() {
-	    this.setState({ pause: true });
-	  },
-	  resume: function resume() {
-	    this.setState({ pause: false });
-	  },
-	  componentDidMount: function componentDidMount() {
-	    var _this2 = this;
+	  return _react2.default.createElement(
+	    "svg",
+	    { viewBox: "0 0 " + width + " " + height, preserveAspectRatio: "xMidYMid" },
+	    _react2.default.createElement(
+	      "g",
+	      { id: "chart", transform: "translate(" + padding.left + ", " + padding.top + ")" },
+	      children
+	    )
+	  );
+	}
+
+/***/ },
+/* 223 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
 	
-	    if (this.isMounted()) {
-	      this.startInterval();
-	
-	      var maxHeight = this.props.children.reduce(function (acc, child, i) {
-	        return Math.max(acc, _this2.refs['child-' + i].clientHeight);
-	      }, 0);
-	      this.setState({ maxHeight: maxHeight });
-	    }
-	  },
-	  componentWillUpdate: function componentWillUpdate(nextProps, nextState) {
-	    if (!this.props.pause && nextProps.pause) {
-	      this.pause();
-	    } else if (this.props.pause && !nextProps.pause) {
-	      this.resume();
-	    }
-	  },
-	  setCurrent: function setCurrent(i) {
-	    var _this3 = this;
-	
-	    this.setState({ current: i, pause: true });
-	    setTimeout(function () {
-	      _this3.setState({ pause: true });
-	    }, this.props.idleTime);
-	  },
-	  componentWillUnmount: function componentWillUnmount() {
-	    clearInterval(interval);
-	  },
-	  render: function render() {
-	    var _this4 = this;
-	
-	    var children = this.props.children;
-	    var _state = this.state;
-	    var current = _state.current;
-	    var maxHeight = _state.maxHeight;
-	
-	
-	    var itemStyle = {
-	      height: maxHeight,
-	      position: 'absolute',
-	      top: 0,
-	      bottom: 0,
-	      left: 0,
-	      right: 0
-	    };
-	
-	    return _react2.default.createElement(
-	      'div',
-	      { className: 'slider-wrapper' },
-	      _react2.default.createElement(
-	        'div',
-	        { className: 'slider-viewport', style: { height: maxHeight } },
-	        _react2.default.createElement(
-	          'div',
-	          { className: 'slider' },
-	          _react2.default.Children.map(children, function (child, i) {
-	            return _react2.default.createElement(
-	              'div',
-	              { ref: 'child-' + i, key: i, className: i === current ? 'showing' : 'hidden', style: maxHeight > 0 ? itemStyle : {} },
-	              child
-	            );
-	          })
-	        )
-	      ),
-	      _react2.default.createElement(
-	        'div',
-	        { style: { display: 'flex', alignItems: 'center', justifyContent: 'center', height: '17px' } },
-	        maxHeight > 0 ? _react2.default.Children.map(children, function (_, i) {
-	          var circleStyle = {
-	            borderRadius: '50%',
-	            width: current === i ? '11px' : '10px',
-	            height: current === i ? '11px' : '10px',
-	            border: '1px solid ' + (current === i ? '#17afe3' : 'grey'),
-	            content: ' ',
-	            backgroundColor: current === i ? 'white' : 'grey',
-	            cursor: 'pointer',
-	            marginLeft: '10px',
-	            marginRight: '10px'
-	          };
-	
-	          return _react2.default.createElement('span', { style: circleStyle, onClick: function onClick() {
-	              return _this4.setCurrent(i);
-	            }, key: i });
-	        }) : null
-	      )
-	    );
-	  }
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
 	});
+	exports.default = xAxis;
 	
-	exports.default = Slider;
+	var _react = __webpack_require__(1);
+	
+	var _react2 = _interopRequireDefault(_react);
+	
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+	
+	// count ticks from data
+	
+	function xAxis() {
+	  var _ref = arguments.length <= 0 || arguments[0] === undefined ? {} : arguments[0];
+	
+	  var _ref$xs = _ref.xs;
+	  var xs = _ref$xs === undefined ? [] : _ref$xs;
+	  var xScale = _ref.xScale;
+	  var chartWidth = _ref.chartWidth;
+	  var chartHeight = _ref.chartHeight;
+	  var tickSize = _ref.tickSize;
+	  var textSize = _ref.textSize;
+	
+	  var ticks = xs
+	  // .filter ?
+	  .map(function (x) {
+	    return { text: x, x: x * xScale, y1: chartHeight, y2: chartHeight + tickSize };
+	  });
+	
+	  return _react2.default.createElement(
+	    'g',
+	    { className: 'plottr-axis' },
+	    _react2.default.createElement('line', { x1: '0', x2: chartWidth, y1: chartHeight, y2: chartHeight, stroke: 'black' }),
+	    _react2.default.createElement(
+	      'g',
+	      { className: 'plottr-ticks' },
+	      ticks.map(function (_ref2, i) {
+	        var text = _ref2.text;
+	        var x = _ref2.x;
+	        var y1 = _ref2.y1;
+	        var y2 = _ref2.y2;
+	        return _react2.default.createElement(
+	          'g',
+	          { className: 'plottr-tick', key: i },
+	          _react2.default.createElement('line', { x1: x, x2: x, y1: y1, y2: y2, stroke: 'black' }),
+	          _react2.default.createElement(
+	            'text',
+	            { x: x, y: y2 + textSize,
+	              textAnchor: 'middle', dominantBaseline: 'central',
+	              style: { fontSize: textSize } },
+	            text
+	          )
+	        );
+	      })
+	    )
+	  );
+	}
+
+/***/ },
+/* 224 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+	
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
+	exports.default = yAxis;
+	
+	var _react = __webpack_require__(1);
+	
+	var _react2 = _interopRequireDefault(_react);
+	
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+	
+	function yAxis() {
+	  var _ref = arguments.length <= 0 || arguments[0] === undefined ? {} : arguments[0];
+	
+	  var _ref$ys = _ref.ys;
+	  var ys = _ref$ys === undefined ? [] : _ref$ys;
+	  var yScale = _ref.yScale;
+	  var chartWidth = _ref.chartWidth;
+	  var chartHeight = _ref.chartHeight;
+	  var tickSize = _ref.tickSize;
+	  var textSize = _ref.textSize;
+	
+	  var ticks = ys
+	  // .filter ?
+	  .map(function (y) {
+	    return { text: y, y: chartHeight - yScale * y, x1: -tickSize, x2: 0 };
+	  });
+	
+	  return _react2.default.createElement(
+	    'g',
+	    { className: 'plottr-axis' },
+	    _react2.default.createElement('line', { x1: '0', x2: '0', y1: '0', y2: chartHeight, stroke: 'black' }),
+	    _react2.default.createElement(
+	      'g',
+	      { className: 'plottr-ticks' },
+	      ticks.map(function (_ref2, i) {
+	        var y = _ref2.y;
+	        var x1 = _ref2.x1;
+	        var x2 = _ref2.x2;
+	        var text = _ref2.text;
+	        return _react2.default.createElement(
+	          'g',
+	          { className: 'plottr-tick', key: i },
+	          _react2.default.createElement('line', { x1: x1, x2: x2, y1: y, y2: y, stroke: 'black' }),
+	          _react2.default.createElement(
+	            'text',
+	            { x: x1, y: y,
+	              textAnchor: 'middle',
+	              style: { fontSize: textSize }, transform: 'rotate(-90 ' + x1 + ' ' + y + ')' },
+	            text
+	          )
+	        );
+	      })
+	    )
+	  );
+	}
+
+/***/ },
+/* 225 */
+/***/ function(module, exports) {
+
+	"use strict";
+	
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
+	exports.domain = domain;
+	exports.copy = copy;
+	exports.flatten = flatten;
+	exports.uniq = uniq;
+	exports.sort = sort;
+	exports.reverse = reverse;
+	
+	function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr2 = Array(arr.length); i < arr.length; i++) { arr2[i] = arr[i]; } return arr2; } else { return Array.from(arr); } }
+	
+	function domain() {
+	  var _Math, _Math2;
+	
+	  var ds = arguments.length <= 0 || arguments[0] === undefined ? [] : arguments[0];
+	
+	  return ds.length ? [(_Math = Math).min.apply(_Math, _toConsumableArray(ds)), (_Math2 = Math).max.apply(_Math2, _toConsumableArray(ds))] : [0, 1];
+	}
+	
+	function copy(arr) {
+	  return arr.reduce(function (copy, x) {
+	    copy.push(x);
+	    return copy;
+	  }, []);
+	}
+	
+	function flatten(a) {
+	  return a.reduce(function (x, y) {
+	    return x.concat(y);
+	  }, []);
+	}
+	
+	function uniq(a) {
+	  return a.reduce(function (copy, x) {
+	    if (copy.indexOf(x) === -1) {
+	      copy.push(x);
+	    }
+	    return copy;
+	  }, []);
+	}
+	
+	function sort(arr) {
+	  var sortFn = arguments.length <= 1 || arguments[1] === undefined ? undefined : arguments[1];
+	
+	  var clone = copy(arr);
+	  clone.sort(sortFn);
+	  return clone;
+	}
+	
+	function reverse(arr) {
+	  var clone = copy(arr);
+	  clone.reverse();
+	  return clone;
+	}
+
+/***/ },
+/* 226 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+	
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
+	exports.default = exportToFile;
+	
+	var _fs = __webpack_require__(227);
+	
+	var _fs2 = _interopRequireDefault(_fs);
+	
+	var _server = __webpack_require__(228);
+	
+	var _server2 = _interopRequireDefault(_server);
+	
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+	
+	// TODO tests
+	function exportToFile(graph, filename) {
+	  return new Promise(function (resolve, reject) {
+	    _fs2.default.writeFile(filename, _server2.default.renderToString(graph), function (err) {
+	      if (err) {
+	        reject(err);
+	      }
+	      resolve();
+	    });
+	  });
+	}
+
+/***/ },
+/* 227 */
+/***/ function(module, exports) {
+
+	console.log("I'm `fs` modules");
+
+
+/***/ },
+/* 228 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+	
+	module.exports = __webpack_require__(148);
+
 
 /***/ }
 /******/ ]);

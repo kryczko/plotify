@@ -1,7 +1,8 @@
 import React from 'react';
 import { render } from 'react-dom';
 import Dropzone from 'react-dropzone';
-import Slider from './slider.js'
+import { LineChart } from 'plottr';
+
 
 class Table extends React.Component {
     render() {
@@ -89,6 +90,7 @@ class App extends React.Component {
         };
         this.openFile = this.openFile.bind(this);
         this.onClick = this.onClick.bind(this);
+        this.OnButtonClick = this.OnButtonClick.bind(this);
     }
 
     openFile(files) {
@@ -117,6 +119,10 @@ class App extends React.Component {
         this.setState({ visible });
     }
 
+    OnButtonClick(event) {
+        this.setState({visible: {Load: false, Inpect: false, Plot: true}})
+    }
+
     render() {
         const {
             data,
@@ -133,7 +139,7 @@ class App extends React.Component {
             return (
                 <div>
                     <Nav state={visible} onClick={this.onClick}/>
-                    <Inspect data={data} />
+                    <Inspect data={data} OnButtonClick={this.OnButtonClick}/>
                 </div>
                 )
         } else {
@@ -162,8 +168,14 @@ class Load extends React.Component {
 class Inspect extends React.Component {
     render() {
         return (
-            <div className="default">
-                <Table data={this.props.data} />
+            <div>
+                <div className="default">
+                    <Table data={this.props.data} />
+                </div>
+                {
+                    this.props.data.length != 0 ?
+                        <button style={{position: 'absolute', bottom: '10', float: 'center'}} className="btn btn-large btn-primary" onClick={this.props.OnButtonClick}>Plot your data!</button> : <div/>
+                }
             </div>
         )
     }
@@ -172,13 +184,30 @@ class Inspect extends React.Component {
 class Plot extends React.Component {
     constructor(props) {
         super(props);
+        const beforeData = this.props.data;
+        // do something with before data and turn it into after data
+        const xs = beforeData.map(line => {
+            return parseFloat(line[0]);
+        });
+        const y = beforeData.map(line => {
+            return parseFloat(line[1]);
+        });
+
+        const afterData = { x: xs, ys: [y] };
+
         this.state = {
+            data: {data: afterData}
         };
     }
 
     render() {
+        const {
+            data
+        } = this.state;
+        console.log(data);
         return (
             <div>
+                <LineChart data={data} style={{width: '80%'}}/>
             </div>
         )
     }
