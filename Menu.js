@@ -53,6 +53,7 @@ class App extends React.Component {
             });
         });
         this.setState({ data });
+        location.hash = '/inspect';
     }
 
     render() {
@@ -137,9 +138,10 @@ class Inspect extends React.Component {
                                 <Table data={this.context.data} />
                                 <button style={{}} className="btn btn-large btn-primary" onClick={() => { location.hash = '/load'; }}>GO BACK AND LOAD DATA</button>
                             </div> : 
-                            <div className="default" style={{flexDirection: 'column'}}>
-                                <Table data={this.context.data} />
-                                <button style={{position: 'absolute', bottom: '10', float: 'center'}} className="btn btn-large btn-primary" onClick={() => { location.hash = '/plot'; }}>Plot your data!</button>
+                            <div>
+                                <Table style={{top: '0'}} data={this.context.data} />
+                                <button style={{position: 'absolute', bottom: '25', left: '10%'}} className="btn btn-large btn-positive" onClick={() => { location.hash = '/plot'; }}>PLOT YOUR DATA</button>
+                                <button style={{position: 'absolute', bottom: '25', right: '10%'}} className="btn btn-large btn-negative" onClick={() => {this.context.data = []}}>REMOVE DATA</button>
                             </div>
                 }
             </div>
@@ -170,7 +172,16 @@ class Plot extends React.Component {
 
         return (
             <div>
-                <LineChart data={data} style={{width: '80%'}}/>
+            {
+            this.context.data.length === 0 ?
+                <div className="default" style={{alignItems: 'center', flexDirection: 'column'}}>
+                    <Table data={this.context.data} />
+                    <button style={{}} className="btn btn-large btn-primary" onClick={() => { location.hash = '/load'; }}>GO BACK AND LOAD DATA</button>
+                </div> :
+                <div>
+                    <LineChart data={data} style={{width: '80%'}}/>
+                </div>
+            }
             </div>
         );
     }
