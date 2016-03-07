@@ -65,7 +65,20 @@ class App extends React.Component {
         return (
             <div>
                 <Nav />
+                {
+                    location.hash.indexOf('#/?') > -1 ? 
+                        <div className="default" style={{alignItems: 'center', flexDirection: 'column'}}>
+                            <img src='./logo.png' width='50%'/> 
+                            <button style={{marginTop: '10%'}} className="btn btn-large btn-positive" onClick={() => { location.hash = '/load'; }}>GET STARTED</button>
+                        </div> : <div/>
+                }
                 { this.props.children }
+                <footer className="toolbar toolbar-footer" style={{position: 'absolute', bottom: '0', width: '100%'}}>
+                    <button className="btn btn-default" style={{margin: '5'}}>
+                        <span className="icon icon-home" onClick={() => {location.hash = '/'}}></span>
+                    </button>
+                    <img src='./icon.png' height='20px' className="pull-right" style={{margin: '5'}} align="middle"/>
+                </footer>
             </div>
         );
     }
@@ -104,7 +117,7 @@ class Table extends React.Component {
         }
 
         return (
-                <table className="table-striped">
+                <table className="table-striped" >
                     <thead>
                         <tr>
                             {
@@ -146,8 +159,8 @@ class Inspect extends React.Component {
                             </div> :
                             <div>
                                 <Table style={{top: '0'}} data={this.context.data} />
-                                <button style={{position: 'absolute', bottom: '25', left: '10%'}} className="btn btn-large btn-positive" onClick={() => { location.hash = '/plot'; }}>PLOT YOUR DATA</button>
-                                <button style={{position: 'absolute', bottom: '25', right: '10%'}} className="btn btn-large btn-negative" onClick={this.context.clearData}>REMOVE DATA</button>
+                                <button style={{position: 'absolute', bottom: '45', left: '10%'}} className="btn btn-large btn-positive" onClick={() => { location.hash = '/plot'; }}>PLOT YOUR DATA</button>
+                                <button style={{position: 'absolute', bottom: '45', right: '10%'}} className="btn btn-large btn-negative" onClick={this.context.clearData}>REMOVE DATA</button>
                             </div>
                 }
             </div>
@@ -185,8 +198,8 @@ class Plot extends React.Component {
                     <Table data={this.context.data} />
                     <button style={{}} className="btn btn-large btn-primary" onClick={() => { location.hash = '/load'; }}>GO BACK AND LOAD DATA</button>
                 </div> :
-                <div>
-                    <LineChart data={data} style={{width: '80%'}}/>
+                <div style={{margin: 'auto', width: '80%'}}>
+                    <LineChart data={data} />
                 </div>
             }
             </div>

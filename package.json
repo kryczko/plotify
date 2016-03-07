@@ -28,6 +28,7 @@
     "webpack": "^1.12.14"
   },
   "dependencies": {
+    "electron-packager": "^5.2.1",
     "fs": "0.0.2",
     "plottr": "^0.2.3",
     "randomcolor": "^0.4.3",
